@@ -1,19 +1,18 @@
-const router = require('koa-router')()
+const router = require('koa-router')();
+const sqlServices=require('../serives/sql.serivce').sqlServices;
+const pathName=require('../config/config').pathName;
+router.prefix(`${pathName}/index`)
 
 router.get('/', async (ctx, next) => {
-  await ctx.render('index', {
-    title: 'Hello Koa 2!'
-  })
+  ctx.body = "hello world";
 })
 
-router.get('/string', async (ctx, next) => {
-  ctx.body = 'koa2 string'
-})
-
-router.get('/json', async (ctx, next) => {
+router.get('/getUser', async (ctx, next) => {
+  let result = await sqlServices.findUserAll();
+  console.log(result);
   ctx.body = {
-    title: 'koa2 json'
-  }
+    data: result
+  };
 })
 
 module.exports = router
