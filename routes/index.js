@@ -1,5 +1,5 @@
 const router = require('koa-router')();
-const sqlServices=require('../serives/sql.serivce').sqlServices;
+const sqlServices=require('../serives/user.serivce').sqlServices;
 const pathName=require('../config/config').pathName;
 router.prefix(`${pathName}/index`)
 

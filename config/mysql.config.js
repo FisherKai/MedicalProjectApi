@@ -1,12 +1,33 @@
 /**
  * mysql配置
  */
-const dbconfig = {
-    databasename: 'medicalproject',
-    username: 'yukai',
-    password: 'Aa123456',
-    port: '3306',
-    host: '59.63.214.238'
+let mysql = require('mysql');
+let dbConfig = require('./config').dbconfig;
+let pool = mysql.createPool({
+    host: dbConfig.host,
+    user: dbConfig.username,
+    password: dbConfig.password,
+    database: dbConfig.databasename
+});
+
+async function execuSql(sql, values) {
+    return new Promise((resolve, reject) => {
+        pool.getConnection(function (err, connection) {
+            if (err) {
+                reject(err)
+            } else {
+                connection.query(sql, values, (err, rows) => {
+                    if (err) {
+                        reject(err)
+                    } else {
+                        resolve(rows)
+                    }
+                    connection.release()
+                })
+            }
+        })
+    })
+
 }
 
-module.exports = dbconfig;
+module.exports = execuSql;
