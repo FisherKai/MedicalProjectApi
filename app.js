@@ -6,10 +6,12 @@ const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 const cors = require('koa2-cors');
 const koajwt = require('koa-jwt');
+const fs = require('fs');
+const path = require('path');
 
 const index = require('./routes/index')
 const users = require('./routes/users')
-const { SECRET } = require('../config/config')
+const { SECRET } = require('./config/config')
 
 // error handler
 onerror(app)
@@ -28,7 +30,13 @@ app.use(require('koa-static')(__dirname + '/public'))
 app.use(async (ctx, next) => {
   const start = new Date()
   await next()
-  const ms = new Date() - start
+  const ms = new Date() - start;
+  let data = `host:${ctx.header.host} method:${ctx.method} url:${ctx.url} UA:${ctx.header['user-agent']} 访问日期:${new Date().toLocaleString()} 响应时间:${ms}ms` + '\n';
+  fs.appendFile(path.resolve(__dirname, './logs/access.log'), data, (err) => {
+    if (err) {
+      console.log(err);
+    }
+  });
   console.log(`${ctx.method} ${ctx.url} - ${ms}ms`)
 })
 
@@ -58,6 +66,11 @@ app.use(users.routes(), users.allowedMethods())
 
 // error-handling
 app.on('error', (err, ctx) => {
+  fs.appendFile(path.resolve(__dirname, './logs/server_error.log'), err, (err) => {
+    if (err) {
+      console.log(err);
+    }
+  });
   console.error('server error', err, ctx)
 });
 
