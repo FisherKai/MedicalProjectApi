@@ -16,7 +16,6 @@ let sqlServices = {
                     reject(err)
                 } else {
                     connection.query(sql, values, (err, rows) => {
-
                         if (err) {
                             reject(err)
                         } else {
@@ -29,10 +28,16 @@ let sqlServices = {
         })
 
     },
+
     findUserAll: async function () {
         let _sql = `select * from user;`
         return await this.query(_sql)
     },
+
+    login: async function ({ username, password }) {
+        let _sql = `select id from user where username = ? and password = ?`;
+        return await this.query(_sql, [username, password]);
+    }
 }
 
 module.exports = {
