@@ -1,5 +1,6 @@
 let execuSql = require('../config/mysql.config');
 const { Entity } = require('../utils/response');
+const { getToken } = require('../utils/token');
 const { _query_by_username,
     _query_by_username_and_password,
     _add } = require('../utils/sql').user;
@@ -22,17 +23,19 @@ let sqlServices = {
         let username_result = await execuSql(_query_by_username, [username]);
         // 检查数据库是否存在一条用户信息
         let userinfo_result = await execuSql(_query_by_username_and_password, [username, password]);
-        let result = {};
+        let res = {}, tokenInfo;
         if (username_result.length > 0 && userinfo_result.length > 0) {
-            result = Entity({
-                userId: userinfo_result[0].id,
-            }, SUCCESS)
+            // 获取token
+            tokenInfo = getToken({ username, userid: userinfo_result[0].id })
+            res = Entity({
+                token: tokenInfo
+            }, SUCCESS);
         } else if (username_result.length > 0 && userinfo_result.length == 0) {
-            result = Entity({}, ERROR_OF_PASAWORD)
+            res = Entity({}, ERROR_OF_PASAWORD)
         } else {
-            result = Entity({}, ERRPR_OF_NOT_FOUND_USER)
+            res = Entity({}, ERRPR_OF_NOT_FOUND_USER)
         }
-        return result;
+        return res;
     },
 
     register: async function ({ username, password }) {

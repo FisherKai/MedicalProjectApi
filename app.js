@@ -5,16 +5,18 @@ const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 const cors = require('koa2-cors');
+const koajwt = require('koa-jwt');
 
 const index = require('./routes/index')
 const users = require('./routes/users')
+const { SECRET } = require('../config/config')
 
 // error handler
 onerror(app)
 
 // middlewares
 app.use(bodyparser({
-  enableTypes:['json', 'form', 'text']
+  enableTypes: ['json', 'form', 'text']
 }))
 app.use(json())
 app.use(logger())
@@ -29,6 +31,26 @@ app.use(async (ctx, next) => {
   const ms = new Date() - start
   console.log(`${ctx.method} ${ctx.url} - ${ms}ms`)
 })
+
+// 错误处理
+app.use((ctx, next) => {
+  return next().catch((err) => {
+    if (err.status === 401) {
+      ctx.status = 401;
+      ctx.body = 'Protected resource, use Authorization header to get access\n';
+    } else {
+      throw err;
+    }
+  })
+})
+// 排除哪些接口不需要验证
+app.use(koajwt({
+  secret: SECRET
+}).unless({
+  path: [
+    /\/user\/login/,
+    /\/user\/register/]
+}));
 
 // routes
 app.use(index.routes(), index.allowedMethods())

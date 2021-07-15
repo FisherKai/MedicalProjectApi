@@ -23,7 +23,6 @@ router.post('/login', async (ctx, next) => {
 router.post('/register', async (ctx, next) => {
     const { username, password } = ctx.request.body;
     let result = await sqlServices.register({ username, password });
-    console.log(result);
     ctx.body = result;
 })
 
