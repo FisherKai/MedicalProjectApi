@@ -26,7 +26,7 @@ let sqlServices = {
         let res = {}, tokenInfo;
         if (username_result.length > 0 && userinfo_result.length > 0) {
             // 获取token
-            tokenInfo = getToken({ username, userid: userinfo_result[0].id })
+            tokenInfo = getToken({ username: username, userid: userinfo_result[0].id })
             res = Entity({
                 token: tokenInfo
             }, SUCCESS);
@@ -41,15 +41,16 @@ let sqlServices = {
     register: async function ({ username, password }) {
         // 检查数据库是否存在用户名
         let username_result = await execuSql(_query_by_username, [username]);
-        let result = {};
+        let result = {},tokenInfo;
         if (username_result.length > 0) {
             // 存在一条记录
             result = Entity({}, ERRPR_USERNAME_IS_EXIST)
         } else {
             let res = await execuSql(_add, [username, password]);
             if (res.affectedRows === 1 && res.insertId) {
+                tokenInfo = getToken({ username: username, userid: res.insertId })
                 result = Entity({
-                    userId: res.insertId
+                    token: tokenInfo
                 }, ADD_SUCCESS)
             } else {
                 result = Entity({}, ADD_ERROR)

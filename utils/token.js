@@ -6,7 +6,7 @@ const { SECRET, tokenTime } = require('../config/config')
  * @param {*} param0 
  */
 function getToken({ username, userid }) {
-    jsonwebtoken.sign({
+    return jsonwebtoken.sign({
         name: username,
         id: userid
     }, SECRET, { expiresIn: tokenTime })

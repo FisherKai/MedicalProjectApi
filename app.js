@@ -66,11 +66,7 @@ app.use(users.routes(), users.allowedMethods())
 
 // error-handling
 app.on('error', (err, ctx) => {
-  fs.appendFile(path.resolve(__dirname, './logs/server_error.log'), err, (err) => {
-    if (err) {
-      console.log(err);
-    }
-  });
+  fs.appendFile(path.resolve(__dirname, './logs/server_error.log'), err, (e) => {});
   console.error('server error', err, ctx)
 });
 
