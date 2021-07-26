@@ -8,6 +8,7 @@ const cors = require('koa2-cors');
 const koajwt = require('koa-jwt');
 const fs = require('fs');
 const path = require('path');
+const io = require('socket.io');
 
 const index = require('./routes/index')
 const users = require('./routes/users')
@@ -66,7 +67,7 @@ app.use(users.routes(), users.allowedMethods())
 
 // error-handling
 app.on('error', (err, ctx) => {
-  fs.appendFile(path.resolve(__dirname, './logs/server_error.log'), err, (e) => {});
+  fs.appendFile(path.resolve(__dirname, './logs/server_error.log'), err, (e) => { });
   console.error('server error', err, ctx)
 });
 
