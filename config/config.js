@@ -11,9 +11,9 @@ module.exports = {
     // 数据库配置
     dbconfig: {
         databasename: 'medicalproject',
-        username: 'yukai',
-        password: 'Aa123456',
+        username: 'root',
+        password: '123456',
         port: '3306',
-        host: '59.63.214.238'
+        host: 'localhost'
     }
 }

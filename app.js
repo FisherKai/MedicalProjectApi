@@ -12,6 +12,7 @@ const io = require('socket.io');
 
 const index = require('./routes/index')
 const users = require('./routes/users')
+const category = require('./routes/category')
 const { SECRET } = require('./config/config')
 
 // error handler
@@ -64,6 +65,7 @@ app.use(koajwt({
 // routes
 app.use(index.routes(), index.allowedMethods())
 app.use(users.routes(), users.allowedMethods())
+app.use(category.routes(), category.allowedMethods())
 
 // error-handling
 app.on('error', (err, ctx) => {
