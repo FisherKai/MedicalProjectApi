@@ -13,6 +13,7 @@ const io = require('socket.io');
 const index = require('./routes/index')
 const users = require('./routes/users')
 const category = require('./routes/category')
+const newList = require('./routes/newList');
 const { SECRET } = require('./config/config')
 
 // error handler
@@ -54,18 +55,19 @@ app.use((ctx, next) => {
   })
 })
 // 排除哪些接口不需要验证
-app.use(koajwt({
-  secret: SECRET
-}).unless({
-  path: [
-    /\/user\/login/,
-    /\/user\/register/]
-}));
+// app.use(koajwt({
+//   secret: SECRET
+// }).unless({
+//   path: [
+//     /\/user\/login/,
+//     /\/user\/register/]
+// }));
 
 // routes
 app.use(index.routes(), index.allowedMethods())
 app.use(users.routes(), users.allowedMethods())
 app.use(category.routes(), category.allowedMethods())
+app.use(newList.routes(), newList.allowedMethods())
 
 // error-handling
 app.on('error', (err, ctx) => {

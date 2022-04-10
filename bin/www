@@ -25,11 +25,20 @@ io.on('connection', socket => {
      * 收到消息，然后做处理去查询应该返回什么结果
      */
     // todo 调用其他接口
-    let i  = 0;
-    socket.emit('receiveMsg', { from: 'server', to: 'client', data: data.data });
-    setInterval(function () {
-      socket.emit('receiveMsg', { from: 'server', to: 'client', data: i++ });
-    },1000)
+    // let i  = 0;、
+    let res;
+    if (data.data == "痛风一般吃什么药") {
+      res = "常用药品：贝诺酯片 阿司匹林片";
+    }else if(data.data == "你今年几岁"){
+      res = "您的问题我还不能理解，请换个问法";
+    }else{
+      res = "常在夜间发作的急性单关节或多关节疼痛通常是首发症状，疼痛进行性加重，呈剧痛，体征类似于急性感染，有肿胀，局部发热，红及明显触痛等";
+    }
+
+    socket.emit('receiveMsg', { from: 'server', to: 'client', data: res });
+    // setInterval(function () {
+    //   socket.emit('receiveMsg', { from: 'server', to: 'client', data: i++ });
+    // },1000)
     //对分组内的用户发送消息
     // socket.broadcast.to(roomid).emit('receiveMsg', 'hello world');//包括自己
     //  socket.broadcast.to(roomid).emit('addcart', 'addcart');//不包括自己
