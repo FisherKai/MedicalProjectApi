@@ -3,6 +3,7 @@
 var app = require('../app');
 var debug = require('debug')('demo:server');
 var http = require('http');
+const koaRequest = require('koa2-request')
 
 var port = normalizePort(process.env.PORT || '4000');
 // app.set('port', port);
@@ -26,22 +27,33 @@ io.on('connection', socket => {
      */
     // todo 调用其他接口
     // let i  = 0;、
-    let res;
-    if (data.data == "痛风一般吃什么药") {
-      res = "常用药品：贝诺酯片 阿司匹林片";
-    }else if(data.data == "你今年几岁"){
-      res = "您的问题我还不能理解，请换个问法";
-    }else{
-      res = "常在夜间发作的急性单关节或多关节疼痛通常是首发症状，疼痛进行性加重，呈剧痛，体征类似于急性感染，有肿胀，局部发热，红及明显触痛等";
-    }
+    let url="http://192.168.0.103:8868/getInfo?question="+data.data;
+    let res = koaRequest({
+            url: 'http://192.168.0.103:8868/getInfo',
+            method: 'get',
+            qs: {
+                question: data.data
+            }
+    });
+      res.then(function(result){
+        console.log(JSON.parse(result.body).content.result);
+         socket.emit('receiveMsg', { from: 'server', to: 'client', data: JSON.parse(result.body).content.result });
+      })
+    // if (data.data == "痛风一般吃什么药") {
+    //   res = "常用药品：贝诺酯片 阿司匹林片";
+    // }else if(data.data == "你今年几岁"){
+    //   res = "您的问题我还不能理解，请换个问法";
+    // }else{
+    //   res = "常在夜间发作的急性单关节或多关节疼痛通常是首发症状，疼痛进行性加重，呈剧痛，体征类似于急性感染，有肿胀，局部发热，红及明显触痛等";
+    // }
 
-    socket.emit('receiveMsg', { from: 'server', to: 'client', data: res });
-    // setInterval(function () {
-    //   socket.emit('receiveMsg', { from: 'server', to: 'client', data: i++ });
-    // },1000)
-    //对分组内的用户发送消息
-    // socket.broadcast.to(roomid).emit('receiveMsg', 'hello world');//包括自己
-    //  socket.broadcast.to(roomid).emit('addcart', 'addcart');//不包括自己
+   
+  // setInterval(function () {
+  //   socket.emit('receiveMsg', { from: 'server', to: 'client', data: i++ });
+  // },1000)
+  //对分组内的用户发送消息
+  // socket.broadcast.to(roomid).emit('receiveMsg', 'hello world');//包括自己
+  //  socket.broadcast.to(roomid).emit('addcart', 'addcart');//不包括自己
   });
 })
 
@@ -93,7 +105,7 @@ function onListening() {
 
 /**
  * 处理URL上的参数
- * @param url 
+ * @param url
  */
 function parseUrl(url) {
   let [, ...params] = url.split('?');
